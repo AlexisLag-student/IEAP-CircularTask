@@ -1,30 +1,88 @@
-# A minimal template for data analysis with python 
+# README - `CircularTask.ipynb`
 
-This is a minimal template for data analysis with python, intended to researchers in human movement sciences that are new to python.   
-Cloning this template for each new data analysis problem should facilitate data analyses with python and minimize potential errors.   
+## Analyse de la Tâche Circulaire Ciblée
 
-## Usage
-1. Download as a zip file (green button `< > Code` on the top right of the page)
-1. Expand the archive on your computer (e.g., in your `Download` folder). 
-1. Rename the extracted folder with the name of your new project (e.g., `ECG_analysis`)
-1. Move the new `ECG_analysis` folder where it should be located (e.g., in your `Documents/CodeProjects/` directory)
-1. In VSCode :
-    1. open the new project in a new window. 
-    1. open `main.ipynb` and click `Run all`
+Ce **Jupyter Notebook** (`CircularTask.ipynb`) est dédié à l'analyse des données issues d'une expérience de pointage appelée **Tâche Circulaire Ciblée** (`CircularTarget`), souvent utilisée pour étudier les performances motrices dans le cadre de la **Loi de Fitts**.
 
-## Notebook template
-The `template.ipynb` notebook contains a minimal template for data analysis with python. It includes the following sections:
-- **Header:**
-  - The first cell will add a header to the notebook with the project title, author, date. 
-  - You should edit this cell to add your information.
-- **Data Analysis Cells:**
-  - The cells you will use for data analysis (e.g., loading data, preprocessing, modeling, etc.) go here.
-- **Export Cell:**
-  - The last cell will save the notebook as a HTML file next to the notebook file and open it in your web browser. 
-  - The HTML will include all the graphics, and will not show the cell numbers. 
-  - Cells tagged with `hide` will not be shown in the HTML file. 
-    - You can add the `hide` tag to any cell you do not want to appear in the HTML file (e.g., in VSCode, click on  `...` in the icon box in the top left of the cell)
+| Information | Détails |
+| :--- | :--- |
+| **Auteurs** | Antoine Lescarboura & Alexis Lagarde |
+| **Date de l'analyse** | 02 Décembre 2025 |
+| **Logiciel d'acquisition des données** | LSL-mouse, version 1.2.0rc5 |
 
-## Requirements
-- [A minimal Python environment for reproducible research in human movement sciences](https://github.com/DenisMot/Python-minimal-install) is my preferred solution.
-- Any IDE supporting python and jupyter notebooks is an alternative solution. 
+***
+
+## Prérequis
+
+Pour exécuter ce Notebook, vous devez disposer d'un environnement Python avec les bibliothèques suivantes installées :
+
+* `numpy` (pour les calculs numériques)
+* `matplotlib.pyplot` (pour la visualisation des données)
+* `os` (pour les opérations sur les chemins de fichiers)
+* `IPython.display` (pour l'affichage dans l'environnement Jupyter)
+
+Le Notebook utilise la commande magique `%matplotlib widget` pour activer des **graphiques interactifs et zoomables**.
+
+***
+
+## Structure des Données
+
+L'analyse suppose que les fichiers de données brutes se trouvent dans un sous-répertoire nommé `./data/`.
+
+### 1. Fichier de Données Brutes
+
+**`001MoDe_R1.csv`**
+
+Ce fichier contient les données d'échantillonnage point par point, y compris :
+
+* **Horodatages** (`timestamp`)
+* **Coordonnées de la souris** (`mouseX`, `mouseY`)
+* **État du curseur** (`mouseInTarget`: booléen indiquant si le curseur est dans la zone cible).
+
+Il inclut également des **métadonnées cruciales** dans son en-tête pour la configuration de la tâche, telles que :
+
+* `centerX`, `centerY`: Centre de la zone de tâche.
+* `externalRadius`, `internalRadius`: Rayons de la cible.
+* `taskRadius`: Rayon de la tâche.
+* `indexOfDifficulty`: L'**Indice de Difficulté (ID)** théorique calculé (ex: `28.007 bits`).
+
+### 2. Fichier des Marqueurs d'Événements
+
+**`001MoDe_R1.marker.csv`**
+
+Ce fichier contient les marqueurs temporels qui délimitent les événements de l'expérience. Les marqueurs clés sont :
+
+* `DoRecord` et `DoPause`: Utilisés pour identifier le début et la fin de chaque période d'enregistrement (cycle).
+* Statistiques récapitulatives de performance pour chaque essai.
+
+***
+
+## Processus d'Analyse
+
+Le Notebook effectue une analyse de la performance motrice, inspirée de la **Loi de Fitts** appliquée à un mouvement circulaire.
+
+1.  Chargement des Données : Les fichiers CSV de données et de marqueurs sont chargés en mémoire.
+2.  Segmentation des Cycles : Les marqueurs `DoRecord` et `DoPause` sont utilisés pour découper le flux de données brutes en segments d'enregistrement distincts (cycles, généralement de 20 secondes chacun).
+3.  Calcul des Métriques de Performance :
+    * La fonction `evaluate_cycle` est le cœur de l'analyse, calculant les métriques pour chaque cycle.
+    * Les métriques calculées incluent :
+        * **Nombre de tours** (`laps`)
+        * **Temps de Mouvement Moyen par tour** (`MT/lap`)
+        * **Rayon effectif** (`Re`) et **Tolérance effective** (`Te`)
+        * **Pourcentage d'erreur** (`error`)
+        * **Indice de Difficulté effectif par tour** (`IDe/lap`)
+        * **Débit d'Information (Throughput)** (`IPe` en bits/s)
+    * Les résultats (ex: **Rec001** à **Rec005**) sont affichés et comparés aux valeurs théoriques.
+4.  Visualisation des données :
+    Le Notebook génère des figures pour chaque cycle, qui affichent :
+    * Le **tracé 2D** de la trajectoire de la souris dans le plan (x, y).
+    * L'**évolution des coordonnées** (x et y) en fonction du temps.
+    
+    
+    
+    
+    
+    
+    
+    
+    
